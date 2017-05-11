@@ -29,13 +29,14 @@ distdf$Persistence <-distdf$Netdist/distdf$Totdist
 
 #returns datafarme with sum distance over timepoints
 #above use the code but filter within as below to reduce to 25 timepoints
-#totaldist25<-ddply(filter(aldat, Timepoint<25), 
-#                  c("Embryo","Track", "Bead"), 
-#                  finddistance)
-#colnames(totaldist25)[4] <- "Totdist25"
-#totalnetdist25<-ddply(aldat, c("Embryo","Track", "Bead"), findnetdistance)
-#totaldist25$Netdist <- totalnetdist25$V1
-#totaldist25$Persistence <-totaldist25$Netdist/totaldist25$Totdist25
+totaldist25<-ddply(filter(aldat, Timepoint<26), 
+                  c("Embryo","Track", "Bead"), 
+                  finddistance)
+colnames(totaldist25)[4] <- "Totdist25"
+totalnetdist25<-ddply(filter(aldat, Timepoint<26), 
+                      c("Embryo","Track", "Bead"), findnetdistance)
+totaldist25$Netdist <- totalnetdist25$V1
+totaldist25$Persistence <-totaldist25$Netdist/totaldist25$Totdist25
 
 library("ggplot2")
 
@@ -61,7 +62,7 @@ ggplot(distdf, aes(Bead, Totdist, colour = Bead)) +
 
 #ggsave("totaldisttraveled.pdf")
 
-ggplot(distdf, aes(Bead, Netdist, colour = Bead)) + 
+ggplot(totaldist25, aes(Bead, Netdist, colour = Bead)) + 
   geom_boxplot() +
   labs( y = expression(
     paste("Displacement (", 

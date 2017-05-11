@@ -30,10 +30,12 @@ alldat25 <- filter(alldat, timepoint<26)
 library(ggplot2)
 library(ggthemes)
 
+pd = position_dodge(0.5)
+
 ggplot(alldat, aes(x = timepoint, y = mean, colour = condition)) + 
   #ylim(-40, 40) +
-  geom_point() +
-  geom_errorbar(data = alldat, aes(ymax = mean+sem, ymin = mean-sem)) +
+  geom_point(position=pd) +
+  geom_errorbar(data = alldat, aes(ymax = mean+sem, ymin = mean-sem), position = pd) +
   labs( y = expression(
     paste("Change in average bead-cell distance (", 
           mu, 
@@ -55,7 +57,6 @@ ggplot(alldat, aes(x = timepoint, y = mean, colour = condition)) +
 #ggsave("bcdist_tbx5amo.pdf")
 
 #first 25 timepoints
-pd = position_dodge(0.5)
 
 ggplot(alldat25, aes(x = timepoint, y = mean, colour = condition)) + 
   #ylim(-40, 40) +

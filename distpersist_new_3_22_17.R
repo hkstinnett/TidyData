@@ -1,11 +1,11 @@
 #total distance traveled for cells
 library(tidyr)
 library(dplyr)
-cells.ctrl <- tbl_df(read.csv("Combined_ctrlcells_withpos.csv"))
-cells.fgf8 <- tbl_df(read.csv("Combined_fgf8cells_withpos.csv"))
+cells.ctrl <- tbl_df(read.csv("tbx5mobead/Combined_ctrlcells.csv"))
+cells.fgf8 <- tbl_df(read.csv("tbx5mobead/Combined_fgf8cells.csv"))
 
-ctrl <- select(cells.ctrl, Track, Timepoint, X, Y, Position, Embryo, Bead)
-fgf8 <- select(cells.fgf8, Track, Timepoint, X, Y, Position, Embryo, Bead)
+ctrl <- select(cells.ctrl, Track, Timepoint, X, Y, Embryo, Bead)
+fgf8 <- select(cells.fgf8, Track, Timepoint, X, Y, Embryo, Bead)
 
 aldat <- rbind(ctrl, fgf8)
 
@@ -21,20 +21,26 @@ findnetdistance<- function(cell){
 
 #returns dataframe with sum distance for each individual cell
 #in variable V1
-distdf<-ddply(aldat, c("Embryo","Track", "Bead", "Position"), finddistance)
-colnames(distdf)[5] <- "Totdist"
-totalnetdist<-ddply(aldat, c("Embryo","Track", "Bead", "Position"), findnetdistance)
+distdf<-ddply(aldat, c("Embryo","Track", "Bead"), finddistance)
+colnames(distdf)[4] <- "Totdist"
+totalnetdist<-ddply(aldat, c("Embryo","Track", "Bead"), findnetdistance)
 distdf$Netdist <- totalnetdist$V1
 distdf$Persistence <-distdf$Netdist/distdf$Totdist
 
-#returns datafarme with sum distance over first 25 timepoints
-#above use the code but filter within as below
-#totaldist25<-ddply(filter(aldat, Timepoint<25), c("Embryo","Track", "Bead", "Position"), finddistance)
+#returns datafarme with sum distance over timepoints
+#above use the code but filter within as below to reduce to 25 timepoints
+#totaldist25<-ddply(filter(aldat, Timepoint<25), 
+#                  c("Embryo","Track", "Bead"), 
+#                  finddistance)
+#colnames(totaldist25)[4] <- "Totdist25"
+#totalnetdist25<-ddply(aldat, c("Embryo","Track", "Bead"), findnetdistance)
+#totaldist25$Netdist <- totalnetdist25$V1
+#totaldist25$Persistence <-totaldist25$Netdist/totaldist25$Totdist25
 
 library("ggplot2")
 
 ## cool plots
-ggplot(distdf, aes(Bead, Totdist, colour = Position)) + 
+ggplot(distdf, aes(Bead, Totdist, colour = Bead)) + 
   geom_boxplot() +
   labs( y = expression(
     paste("Total distance traveled (", 
@@ -53,9 +59,9 @@ ggplot(distdf, aes(Bead, Totdist, colour = Position)) +
         legend.position = "none"
   )
 
-ggsave("totaldisttraveled_first25.pdf")
+#ggsave("totaldisttraveled.pdf")
 
-ggplot(distdf, aes(Bead, Netdist, colour = Position)) + 
+ggplot(distdf, aes(Bead, Netdist, colour = Bead)) + 
   geom_boxplot() +
   labs( y = expression(
     paste("Displacement (", 
@@ -74,10 +80,10 @@ ggplot(distdf, aes(Bead, Netdist, colour = Position)) +
         legend.position = "none"
   )
 
-ggsave("absdist_first25.pdf")
+#ggsave("absdist.pdf")
 
 
-ggplot(distdf, aes(Bead, Persistence, colour = Position)) + 
+ggplot(distdf, aes(Bead, Persistence, colour = Bead)) + 
   geom_boxplot() +
   labs( y = "Persistence (displacement/distance traveled)",
     x = "Bead condition") +
@@ -93,7 +99,7 @@ ggplot(distdf, aes(Bead, Persistence, colour = Position)) +
         legend.position = "none"
   )
 
-ggsave ("persistance_first25.pdf")
+#ggsave ("persistance_first25.pdf")
 
 t.test(totaldist$totaldist[totaldist$Bead == "ctrl"],
        totaldist$totaldist[totaldist$Bead == "fgf8"])

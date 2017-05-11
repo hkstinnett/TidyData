@@ -27,6 +27,7 @@ alldat <- rbind(ctrlplot, fgf8plot)
 alldat25 <- filter(alldat, timepoint<26)
 
 #install.packages("ggthemes")
+library(ggplot2)
 library(ggthemes)
 
 ggplot(alldat, aes(x = timepoint, y = mean, colour = condition)) + 

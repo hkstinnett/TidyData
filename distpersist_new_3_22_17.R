@@ -62,7 +62,7 @@ ggplot(distdf, aes(Bead, Totdist, colour = Bead)) +
 
 #ggsave("totaldisttraveled.pdf")
 
-ggplot(totaldist25, aes(Bead, Netdist, colour = Bead)) + 
+ggplot(distdf, aes(Bead, Netdist, colour = Bead)) + 
   geom_boxplot() +
   labs( y = expression(
     paste("Displacement (", 
